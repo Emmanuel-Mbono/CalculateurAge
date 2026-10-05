@@ -1,24 +1,28 @@
-﻿namespace CalculateurAge
+﻿using CalculateurAge.Views;
+
+namespace CalculateurAge;
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    public MainPage()
     {
-        int count = 0;
+        InitializeComponent();
+    }
 
-        public MainPage()
+    private async void OnCalculerClicked(object sender, EventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(entryNom.Text))
         {
-            InitializeComponent();
+            await DisplayAlert("Erreur", "Entrez un nom", "OK");
+            return;
         }
 
-        private void OnCounterClicked(object? sender, EventArgs e)
-        {
-            count++;
+        DateTime d = pickerDate.Date;
+        int age = DateTime.Today.Year - d.Year;
+        if (d.Date > DateTime.Today.AddYears(-age)) age--;
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
-        }
+        // Navigation vers la seconde page avec paramètres dans l'URL.
+        await Shell.Current.GoToAsync(
+            $"{nameof(ResultatPage)}?nom={entryNom.Text}&age={age}");
     }
 }
